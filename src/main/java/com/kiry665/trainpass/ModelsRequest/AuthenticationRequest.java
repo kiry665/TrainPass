@@ -1,4 +1,4 @@
-package com.kiry665.trainpass.Models;
+package com.kiry665.trainpass.ModelsRequest;
 
 public class AuthenticationRequest {
 
