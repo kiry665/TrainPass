@@ -12,7 +12,7 @@ import java.util.List;
 @Repository
 public interface RouteRepository extends JpaRepository<Route, Integer> {
 
-    @Query("SELECT NEW com.kiry665.trainpass.Models.RouteDetails(s1.name, s2.name, t.train_number, t.type, r1.departure_time, r2.arrival_time) " +
+    @Query("SELECT NEW com.kiry665.trainpass.Models.RouteDetails(s1.name, s2.name, t.trainNumber, t.type, r1.departure_time, r2.arrival_time) " +
             "FROM Route r1 " +
             "JOIN Route r2 ON r1.train.id = r2.train.id " +
             "JOIN Train t ON r1.train.id = t.id " +

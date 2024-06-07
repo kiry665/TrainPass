@@ -1,5 +1,6 @@
 package com.kiry665.trainpass.Models;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 
 import java.sql.Time;
@@ -12,8 +13,9 @@ public class Route {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "train_id")
+    @JsonBackReference
     private Train train;
 
     @OneToOne
