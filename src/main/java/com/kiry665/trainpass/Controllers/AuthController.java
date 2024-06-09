@@ -1,12 +1,17 @@
 package com.kiry665.trainpass.Controllers;
 
 import com.kiry665.trainpass.Models.Role;
+import com.kiry665.trainpass.ModelsRequest.AuthenticationResponse;
 import com.kiry665.trainpass.Security.JwtUtil;
 import com.kiry665.trainpass.ModelsRequest.AuthenticationRequest;
 import com.kiry665.trainpass.Models.User;
 import com.kiry665.trainpass.Services.RoleService;
 import com.kiry665.trainpass.Services.UserService;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -20,6 +25,9 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/auth")
 public class AuthController {
+
+    @Value("${jwt.expiration}")
+    private Long jwtExpiration;
 
     @Autowired
     private AuthenticationManager authenticationManager;
@@ -49,7 +57,7 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public String createAuthenticationToken(@RequestBody AuthenticationRequest authenticationRequest) throws Exception {
+    public ResponseEntity<AuthenticationResponse> createAuthenticationToken(@RequestBody AuthenticationRequest authenticationRequest) throws Exception {
         try {
             authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(authenticationRequest.getUsername(), authenticationRequest.getPassword())
@@ -61,6 +69,6 @@ public class AuthController {
         final UserDetails userDetails = userDetailsService.loadUserByUsername(authenticationRequest.getUsername());
         final String jwt = jwtUtil.generateToken(userDetails.getUsername());
 
-        return jwt;
+        return ResponseEntity.ok(new AuthenticationResponse(jwt, jwtExpiration));
     }
 }

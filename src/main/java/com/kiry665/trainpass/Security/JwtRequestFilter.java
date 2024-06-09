@@ -1,6 +1,7 @@
 package com.kiry665.trainpass.Security;
 
 import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.SignatureException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -39,9 +40,17 @@ public class JwtRequestFilter extends OncePerRequestFilter {
             try {
                 username = jwtUtil.extractUsername(jwt);
             } catch (ExpiredJwtException e) {
-                System.out.println("JWT token is expired");
+                logger.warn("JWT token is expired");
+                response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Token is expired");
+                return;
+            } catch (SignatureException e) {
+                logger.warn("JWT token is invalid");
+                response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Invalid token");
+                return;
             } catch (Exception e) {
-                System.out.println("Error while parsing JWT token");
+                logger.error("Error while parsing JWT token", e);
+                response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized");
+                return;
             }
         }
 
