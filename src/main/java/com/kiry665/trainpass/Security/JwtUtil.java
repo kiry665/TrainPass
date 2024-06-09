@@ -19,7 +19,10 @@ public class JwtUtil {
     private String SECRET_KEY;
 
     @Value("${jwt.expiration}")
-    private Long expires;
+    private Long expiration;
+
+    @Value("${jwt.longexpiration}")
+    private Long longExpiration;
 
     public String extractUsername(String token) {
         return extractClaim(token, Claims::getSubject);
@@ -47,9 +50,20 @@ public class JwtUtil {
         return createToken(claims, username);
     }
 
+    public String generateLongTimeToken(String username) {
+        Map<String, Object> claims = new HashMap<>();
+        return createLongTimeToken(claims, username);
+    }
+
     private String createToken(Map<String, Object> claims, String subject) {
         return Jwts.builder().setClaims(claims).setSubject(subject).setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + expires))
+                .setExpiration(new Date(System.currentTimeMillis() + expiration))
+                .signWith(SignatureAlgorithm.HS256, SECRET_KEY).compact();
+    }
+
+    private String createLongTimeToken(Map<String, Object> claims, String subject) {
+        return Jwts.builder().setClaims(claims).setSubject(subject).setIssuedAt(new Date(System.currentTimeMillis()))
+                .setExpiration(new Date(System.currentTimeMillis() + longExpiration))
                 .signWith(SignatureAlgorithm.HS256, SECRET_KEY).compact();
     }
 

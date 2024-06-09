@@ -29,6 +29,9 @@ public class AuthController {
     @Value("${jwt.expiration}")
     private Long jwtExpiration;
 
+    @Value("${jwt.longexpiration}")
+    private Long jwtLongExpiration;
+
     @Autowired
     private AuthenticationManager authenticationManager;
 
@@ -67,8 +70,8 @@ public class AuthController {
         }
 
         final UserDetails userDetails = userDetailsService.loadUserByUsername(authenticationRequest.getUsername());
-        final String jwt = jwtUtil.generateToken(userDetails.getUsername());
+        final String jwt = authenticationRequest.getRemember() ? jwtUtil.generateLongTimeToken(userDetails.getUsername()) : jwtUtil.generateToken(userDetails.getUsername());
 
-        return ResponseEntity.ok(new AuthenticationResponse(jwt, jwtExpiration));
+        return ResponseEntity.ok(new AuthenticationResponse(jwt, authenticationRequest.getRemember() ? jwtLongExpiration : jwtExpiration));
     }
 }
