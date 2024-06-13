@@ -41,3 +41,4 @@ CREATE INDEX idx_routes_station_id ON routes (station_id);
 CREATE INDEX idx_routes_train_id ON routes (train_id);
 CREATE INDEX idx_routes_sequence_number ON routes (sequence_number);
 CREATE INDEX idx_stations_name ON stations (name);
+
